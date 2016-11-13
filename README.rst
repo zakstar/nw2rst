@@ -4,16 +4,16 @@ README
 Overview
 --------
 
-rst2nw is a noweb_ backend that processes noweb files and produces output in
+nw2rst is a small tool to allow people write `Literate Programming`_ using the
+reStructuredText_ language.
+
+It is a noweb_ backend that processes noweb files and produces output in
 reStructuredText_ format.  So the output can later be processed with tools
 like docutils_ to produce HTML, ODT, LaTeX and other formats.
 
 .. _noweb: http://www.cs.tufts.edu/~nr/noweb/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _docutils: http://docutils.sourceforge.net/
-
-So, in summary, it is just a small tool to allow people write `Literate
-Programming`_ using the reStructuredText_ language.
 
 .. _Literate Programming: https://en.wikipedia.org/wiki/Literate_programming
 
