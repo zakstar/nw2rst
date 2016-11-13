@@ -7,8 +7,8 @@ nw2rst.sh: nw2rst.nw
 	mv $@.tmp $@
 	chmod 755 $@
 
-nw2rst.rst: nw2rst.nw
-	noweave -backend ./nw2rst.sh $? > $@.tmp
+nw2rst.rst: nw2rst.nw nw2rst.sh
+	noweave -backend ./nw2rst.sh nw2rst.nw > $@.tmp
 	mv $@.tmp $@
 
 # optional target
