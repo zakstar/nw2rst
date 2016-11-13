@@ -1,0 +1,170 @@
+===================================
+ reStructuredText to noweb backend
+===================================
+
+Introduction
+============
+
+noweb_ is a famous tool in `Literate Programming`_ world.  This is a widely used
+tool because of its independence of programming languages, while other tools are
+aimed at specific languages.
+
+.. _noweb: http://www.cs.tufts.edu/~nr/noweb/
+.. _Literate Programming: https://en.wikipedia.org/wiki/Literate_programming
+
+Also, if it can produce output in different formats, because of its hability to
+switch the backend.  LaTeX_ and HTML output, among others, are possible by
+default and other backends can be written.  This is what this program is
+intended for.  It is intended to be a backend to reStructuredText_ which is a
+plaintext markup language.
+
+.. _LaTeX: https://en.wikipedia.org/wiki/LaTeX
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+
+noweb basics
+============
+
+Programs
+--------
+
+Two different programs are the heart of noweb.  ``noweb`` itself is a command
+that quickly turns a noweb file into a TeX file.  The `noweb man page`_ states
+that::
+
+    The noweb(1) command is for people who don't like reading man pages or
+    who are switching from nuweb. To get the most out of noweb, use
+    notangle(1) and noweave(1) instead.
+
+.. _noweb man page: http://dev.man-online.org/man1/noweb/
+
+The programs are:
+
+``noweb``
+    reads a noweb file and outputs a TeX file;
+``notangle``
+    generates the program files from a noweb file;
+``noweave``
+    generates the final documentation from a noweb file;
+``nountangle``
+    generates the ordinary program, but let documentation as comments.
+
+The backend we show here will be used by ``noweave``, so generated documentation
+is in reStructuredText format.
+
+How transformation works
+------------------------
+
+Commands just listed are composed by a set of subprograms, connected by
+pipelines (noweb design is inspired by Unix design).  If the user runs
+``noweave`` (or ``notangle``) it will use a markup parser, filters and the
+backend to produce the desired result.
+
+The defaults of each phase can be changed with the following options:
+
+``-markup``
+    changes the default parser that would allow noweb to understand other
+    formats other than noweb format (like for compability with other literate
+    programming tools).  It, them, translates it to an intermediary format (see
+    below).
+
+``-filter``
+    allow changes in the intermediary format.
+
+``-backend``
+    change default backend.  noweb comes with several backends, like HTML, LaTeX
+    and ASCII.
+
+noweb intermediate format
+-------------------------
+
+
+
+<<nw2rst.sh>>=
+<<hashbang>>
+# TODO: what options are passed to the backend?  may the user give backend some
+# information?
+awk '
+<<awk script>>
+'
+
+<<hashbang>>=
+#!/bin/sh
+
+<<awk script>>=
+BEGIN {
+    is_code=0
+}
+
+/^@defn/ {
+    str=strip_tag($0, $1)
+    # TODO: use the ``..code`` directive?
+    printf("``<%s>=``\n\n::\n", str)
+    next
+}
+
+/^@use/ {
+    $0=strip_tag($0, $1)
+    printf("    <%s>", $0)
+    next
+}
+
+/^@begin code/ {
+    is_code = 1
+    next
+}
+
+/^@begin docs/ {
+    is_code = 0
+    next
+}
+
+/^@end/ {
+    next
+}
+
+/^@nl/ {
+    printf("\n")
+    next
+}
+
+/^@text/ {
+    if (is_code)
+        printf("    ")
+    printf("%s", substr($0, 7))
+    next
+}
+
+/^@header/ {
+    # TODO
+    next
+}
+
+/^@trailer/ {
+    # TODO
+    next
+}
+
+/^@file/ {
+    # TODO
+    next
+}
+
+{
+    print $0
+}
+
+
+function strip_tag(line, tag)
+{
+    return substr(line, length(tag)+2)
+}
+@
+
+References
+==========
+
+.. TODO: references are cited?
+.. [MCDERMOTT] http://www.mad-computer-scientist.com/files/toasciidoc.patch
+.. [RAMSEY1997] http://www.cs.tufts.edu/~nr/noweb/guide.ps
+
+.. vim: set ft=awk sts=4 sw=4 et:
