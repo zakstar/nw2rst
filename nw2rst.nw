@@ -98,13 +98,13 @@ BEGIN {
 /^@defn/ {
     str=strip_tag($0, $1)
     # TODO: use the ``..code`` directive?
-    printf("``<%s>=``\n\n::\n", str)
+    printf("``@<<%s>>=``\n\n::\n", str)
     next
 }
 
 /^@use/ {
     $0=strip_tag($0, $1)
-    printf("    <%s>", $0)
+    printf("    @<<%s>>", $0)
     next
 }
 
